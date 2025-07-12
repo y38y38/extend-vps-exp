@@ -38,16 +38,22 @@ try {
     await page.waitForNavigation()
     await page.click('text=無料VPSの利用を継続する')
 } catch (e) {
-    console.error(e)
+    console.error('catch block:', e)
 } finally {
+    console.log('finally block: start')
     await setTimeout(2000)
+    console.log('finally block: after setTimeout')
     await recorder.stop()
+    console.log('finally block: after recorder.stop()')
     await browser.close()
+    console.log('finally block: after browser.close()')
     // 録画ファイルの下半分だけを切り取る
     try {
+        console.log('finally block: before cropBottomHalf')
         await cropBottomHalf()
         console.log('recording_bottom.webm を作成しました')
     } catch (e) {
         console.error('ffmpegでの切り取りに失敗:', e)
     }
+    console.log('finally block: end')
 }
