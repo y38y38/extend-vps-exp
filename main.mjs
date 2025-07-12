@@ -1,3 +1,19 @@
+// 下半分だけを切り取るffmpegコマンドを実行する関数を追加
+import { exec } from 'child_process'
+
+function cropBottomHalf(input = 'recording.webm', output = 'recording_bottom.webm') {
+    const cmd = `ffmpeg -y -i ${input} -filter:v "crop=in_w:in_h/2:0:in_h/2" -c:a copy ${output}`
+    return new Promise((resolve, reject) => {
+        exec(cmd, (error, stdout, stderr) => {
+            if (error) {
+                reject(stderr)
+            } else {
+                resolve(stdout)
+            }
+        })
+    })
+}
+
 import puppeteer from 'puppeteer'
 import { setTimeout } from 'node:timers/promises'
 
@@ -27,4 +43,11 @@ try {
     await setTimeout(2000)
     await recorder.stop()
     await browser.close()
+    // 録画ファイルの下半分だけを切り取る
+    try {
+        await cropBottomHalf()
+        console.log('recording_bottom.webm を作成しました')
+    } catch (e) {
+        console.error('ffmpegでの切り取りに失敗:', e)
+    }
 }
